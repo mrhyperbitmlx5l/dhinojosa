@@ -14,7 +14,7 @@
 [http://www.ljserver.cn:5000](http://www.ljserver.cn:5000)
 
 ## 后台java代码地址
-[https://github.com/mose-x/wps-view-java.git](https://github.com/mose-x/wps-view-java.git)
+[https://gitee.com/zm_space/wps-view-java.git](https://gitee.com/zm_space/wps-view-java.git)
 
 ## 安装依赖
 ```
