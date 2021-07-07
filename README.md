@@ -14,7 +14,7 @@
 [https://ljserver.cn/wpsonline](https://ljserver.cn/wpsonline)
 
 ## 后台java代码地址
-[https://gitee.com/zm_space/wps-view-java.git](https://gitee.com/zm_space/wps-view-java.git)
+[https://gitee.com/mose-x/wps-view-java.git](https://gitee.com/mose-x/wps-view-java.git)
 
 ## 安装依赖
 ```
