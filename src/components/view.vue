@@ -21,7 +21,7 @@
                     mount: document.querySelector('#app'),
                     wpsUrl: url,
                 });
-                wps.setToken({"token": token});
+                wps.setToken({token});
                 let app = wps.Application;
                 this.console.log(JSON.stringify(app))
             }
