@@ -158,11 +158,24 @@
     },
 
     created(){
-      this.getFileList();
       this.showOther=true;
     },
 
+    mounted() {
+      let _this = this;
+      _this.getFileList();
+      document.addEventListener("visibilitychange",_this.handleVisible)
+    },
+    destroyed() {
+      document.removeEventListener("visibilitychange",this.handleVisible)
+    },
+
     methods: {
+      handleVisible(e){
+        if (e.target.visibilityState === 'visible' || e.target.visibilityState === 'unloaded'){
+          this.getFileList();
+        }
+      },
       getFileList(){
         this.loading = true;
         getFileListByPage(this.pageR).then((res) => {
