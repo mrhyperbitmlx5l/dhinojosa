@@ -11,38 +11,36 @@
     <br>
     <el-button icon="el-icon-delete" class="el-button" @click="clClean">clean</el-button>
     <el-button icon="el-icon-check" class="el-button" @click="clSubmit" v-loading.fullscreen.lock="loading">view</el-button>
+    <el-button icon="el-icon-refresh-right" class="el-button" @click="clConvert" v-loading.fullscreen.lock="loading">
+      convert
+    </el-button>
   </div>
 </template>
 
 <script>
-  import {getViewUrlWebPath} from '../api/index'
-  import {fileSuffix} from "../utils/common-data"
+  import {getViewUrlWebPath, convertReq, convertRes} from '../api/index'
+  import {fileSuffix} from "@/utils/common-data"
 
   export default {
     name: "webFile",
     data() {
       return {
         loading: false,
-        textarea: ''
+        textarea: '',
+        convertResIndex: 0,
+        convertRes: ''
       }
     },
     methods:{
-      clClean(){
-        this.textarea  = '';
-        this.console.success('cleaned textarea value');
-      },
-      clSubmit(){
-        this.getViewUrlWebPath();
-      },
-      getViewUrlWebPath(){
+      checkFileUrl() {
         if (!this.textarea) {
           this.showErrMeg('输入内容不能为空！');
-          return;
-        }else {
+          return false;
+        } else {
           let reg = /^((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/;
-          if(!(reg.test(this.textarea))){
+          if (!(reg.test(this.textarea))) {
             this.showErrMeg('请输入正确的file url！');
-            return;
+            return false;
           }
           const fileName = this.textarea;
           const fileStrArr = fileName.split(".");
@@ -54,8 +52,71 @@
 
           if (!result) {
             this.showErrMeg("不支持该文件类型");
-            return;
+            return false;
           }
+        }
+        return true;
+      },
+      clClean(){
+        this.textarea  = '';
+        this.console.success('cleaned textarea value');
+      },
+      clSubmit(){
+        this.getViewUrlWebPath();
+      },
+      clConvert() {
+        if (!this.checkFileUrl()) {
+          return;
+        }
+        this.loading = true;
+        const fileUrl = {
+          fileUrl: this.textarea
+        };
+        if (fileUrl) {
+          const params = {
+            taskId: this.getUUId(),
+            srcUri: this.textarea,
+            // 参数可调，详见 https://open.wps.cn/docs/doc-format-conversion/api-list
+            exportType: "pdf"
+          };
+          // convert
+          convertReq(params).then((res) => {
+            if (res.data) {
+              // convert res
+              this.loading = true;
+              this.getConvertRes(params.taskId);
+            } else {
+              this.showErrMeg('请求错误！');
+              this.loading = false;
+            }
+          }).catch(() => {
+            this.showErrMeg('请求错误！');
+            this.loading = false;
+          });
+        }
+      },
+      getConvertRes: async function (taskId) {
+        const params = {taskId}
+        await convertRes(params).then((res) => {
+          this.convertRes = res.data.data;
+        })
+        if (!this.convertRes && this.convertResIndex <= 5) {
+          setTimeout(() => {
+            this.convertResIndex += 1;
+            this.getConvertRes(taskId)
+          }, 1000)
+        }
+        if (this.convertRes) {
+          this.loading = false;
+          // 下载转换结果
+          let a = document.createElement("a");
+          a.href = this.convertRes;
+          a.click()
+        }
+      },
+      getViewUrlWebPath(){
+        if (!this.checkFileUrl()) {
+          return;
         }
         this.loading = true;
         const params = {

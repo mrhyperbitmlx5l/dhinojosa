@@ -42,3 +42,13 @@ export const getViewUrlDbPath = params => {
 export const getCreateFilePath = params => {
     return axios.get("/v1/api/file/createTemplateFile", { params: params});
 };
+
+// 转换接口
+export const convertReq = params => {
+    return axios.put("/v1/api/file/convert", params);
+};
+
+// 查询转换结果接口
+export const convertRes = params => {
+    return axios.get("/v1/api/file/getConvert", {params: params});
+};
